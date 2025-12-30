@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>金铲铲S16助手</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC",sans-serif;background:#0a0a12;color:#e4e4e7;min-height:100vh;padding:16px}
+.container{max-width:480px;margin:0 auto}
+.header{text-align:center;padding:20px 0}
+.header small{font-size:12px;color:#666;letter-spacing:4px}
+.header h1{font-size:24px;background:linear-gradient(90deg,#fbbf24,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:8px}
+.nav{display:flex;gap:6px;margin-bottom:20px;background:rgba(255,255,255,0.03);padding:8px;border-radius:16px}
+.nav button{flex:1;padding:10px 4px;background:none;border:none;color:#666;font-size:12px;border-radius:12px;cursor:pointer}
+.nav button.active{background:rgba(251,191,36,0.2);color:#fbbf24}
+.tab{display:none}
+.tab.active{display:block}
+.card{background:rgba(255,255,255,0.05);border-radius:14px;padding:14px;margin-bottom:14px}
+.badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:bold}
+.t0{background:#fbbf24;color:#000}
+.t1{background:#3b82f6;color:#fff}
+.bet{background:#ef4444;color:#fff}
+.c7{background:#ef4444;color:#fff}
+.c5{background:#fbbf24;color:#000}
+.c4{background:#a855f7;color:#fff}
+.c3{background:#3b82f6;color:#fff}
+.tag{background:rgba(236,72,153,0.2);color:#f9a8d4;padding:5px 10px;border-radius:6px;font-size:12px;display:inline-block;margin:3px}
+.item-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.item-btn{padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;cursor:pointer;text-align:center}
+.item-btn.sel{background:rgba(251,191,36,0.3);border:2px solid #fbbf24}
+.formula{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:rgba(0,0,0,0.3);border-radius:10px;margin-bottom:10px}
+.slot{width:45px;height:45px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px dashed #333}
+.slot.filled{border:2px solid #fbbf24;background:rgba(251,191,36,0.1)}
+.result{min-width:70px;height:45px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;border:2px dashed #333}
+.result.filled{background:rgba(251,191,36,0.2);border:2px solid #fbbf24}
+.tier-h{padding:10px 14px;border-radius:10px 10px 0 0;font-weight:bold;font-size:13px}
+.tier-h.t0{background:linear-gradient(90deg,#fbbf24,#f97316);color:#000}
+.tier-h.t1{background:linear-gradient(90deg,#3b82f6,#1d4ed8);color:#fff}
+.tier-h.bet{background:linear-gradient(90deg,#ef4444,#dc2626);color:#fff}
+.tier-b{background:rgba(255,255,255,0.03);border-radius:0 0 10px 10px;padding:10px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hero-btn{padding:12px 6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;cursor:pointer;text-align:center}
+.back-btn{background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);color:#22d3ee;padding:8px 16px;border-radius:16px;cursor:pointer;margin-bottom:14px;font-size:13px}
+.hidden{display:none!important}
+footer{text-align:center;padding:20px;color:#444;font-size:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<small>S16赛季</small>
+<h1>新手速成助手</h1>
+<p style="color:#555;font-size:11px;margin-top:6px">作者:四十大盗 | 小红书:@四十大盗</p>
+</div>
+<div class="nav">
+<button class="active" onclick="showTab('comps')">📋阵容</button>
+<button onclick="showTab('items')">⚔️装备</button>
+<button onclick="showTab('heroes')">🦸英雄</button>
+<button onclick="showTab('unlock')">🔓解锁</button>
+<button onclick="showTab('guide')">📖运营</button>
+</div>
+
+<div id="comps" class="tab active">
+<div id="compList"></div>
+<div id="compDetail" class="hidden"></div>
+</div>
+
+<div id="items" class="tab">
+<div class="card">
+<div style="text-align:center;margin-bottom:12px;color:#ec4899;font-weight:bold">🔧 点两个散件看合成</div>
+<div class="item-grid" id="baseGrid"></div>
+<div class="formula">
+<div id="s1" class="slot">?</div>
+<span style="color:#444">+</span>
+<div id="s2" class="slot">?</div>
+<span style="color:#444">=</span>
+<div id="res" class="result"><span>?</span></div>
+</div>
+<div id="resDesc" style="text-align:center;color:#a1a1aa;font-size:13px"></div>
+<button onclick="resetItems()" style="display:block;margin:10px auto;background:none;border:1px solid #333;color:#666;padding:6px 16px;border-radius:16px;cursor:pointer">🔄重置</button>
+</div>
+<div class="card" id="itemList"></div>
+</div>
+
+<div id="heroes" class="tab">
+<div id="heroList"></div>
+<div id="heroDetail" class="hidden"></div>
+</div>
+
+<div id="unlock" class="tab">
+<div style="background:rgba(168,85,247,0.1);border-radius:10px;padding:12px;margin-bottom:14px;color:#c4b5fd;font-size:13px">🔓 S16核心：<strong style="color:#fbbf24">40名弈子</strong>需完成任务解锁！</div>
+<div id="unlockList"></div>
+</div>
+
+<div id="guide" class="tab">
+<div class="card">
+<div style="font-weight:bold;margin-bottom:14px;color:#fbbf24">📈 标准运营节奏</div>
+<div id="guideList"></div>
+</div>
+<div class="card" style="background:rgba(34,197,94,0.1)">
+<div style="font-weight:bold;margin-bottom:10px;color:#22c55e">💰 经济管理</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;text-align:center"><div style="color:#666;font-size:11px">每10金</div><div style="color:#fbbf24;font-weight:bold">+1利息</div></div>
+<div style="background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;text-align:center"><div style="color:#666;font-size:11px">保持50金</div><div style="color:#22c55e;font-weight:bold">每回合+5</div></div>
+</div>
+</div>
+<div style="text-align:center;padding:16px;background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(236,72,153,0.1));border-radius:14px;line-height:2">
+<div style="font-weight:bold;margin-bottom:10px;color:#fbbf24">🎯 上分口诀</div>
+开局看牌定方向<br>50金利息是王道<br>3-2升6要记牢<br>4-2拉8把卡找<br>解锁条件别忘掉
+</div>
+</div>
+
+<footer>⚠️仅供攻略参考 数据来源网络</footer>
+</div>
+
+<script>
+var baseItems=[{id:'sword',name:'暴风大剑',icon:'⚔️'},{id:'bow',name:'反曲之弓',icon:'🏹'},{id:'rod',name:'无用大棒',icon:'🪄'},{id:'tear',name:'女神之泪',icon:'💧'},{id:'armor',name:'锁子甲',icon:'🛡️'},{id:'cloak',name:'负极斗篷',icon:'🧥'},{id:'belt',name:'巨人腰带',icon:'💫'},{id:'glove',name:'暴击手套',icon:'🧤'}];
+
+var combinedItems=[
+{base1:'sword',base2:'glove',name:'无尽之刃',icon:'💎',desc:'💥暴击超疼！物理C必备',cat:'physical'},
+{base1:'bow',base2:'rod',name:'鬼索狂暴之刃',icon:'👻',desc:'🔥羊刀！越打越快',cat:'physical'},
+{base1:'sword',base2:'cloak',name:'饮血剑',icon:'🩸',desc:'❤️打人回血',cat:'physical'},
+{base1:'bow',base2:'glove',name:'最后的轻语',icon:'🗣️',desc:'🎯破甲弓打肉必备',cat:'physical'},
+{base1:'sword',base2:'bow',name:'巨人杀手',icon:'⚡',desc:'💪巨杀专打胖子',cat:'physical'},
+{base1:'bow',base2:'bow',name:'红霸符',icon:'🔥',desc:'🔥海妖攻速真伤',cat:'physical'},
+{base1:'sword',base2:'sword',name:'死亡之刃',icon:'🗡️',desc:'💀杀人越多越猛',cat:'physical'},
+{base1:'rod',base2:'glove',name:'珠光护手',icon:'✨',desc:'💫法爆！法师必备',cat:'magic'},
+{base1:'rod',base2:'rod',name:'死亡之帽',icon:'🎩',desc:'🎩大帽子法强翻倍',cat:'magic'},
+{base1:'tear',base2:'tear',name:'蓝霸符',icon:'💙',desc:'💙开局放技能',cat:'magic'},
+{base1:'sword',base2:'tear',name:'朔极之矛',icon:'🐲',desc:'🐲青龙刀无限放技能',cat:'magic'},
+{base1:'rod',base2:'tear',name:'大天使之杖',icon:'😇',desc:'😇越放越强',cat:'magic'},
+{base1:'tear',base2:'glove',name:'正义之拳',icon:'👊',desc:'👊法师打肉必备',cat:'magic'},
+{base1:'sword',base2:'rod',name:'海克斯科技枪',icon:'🔫',desc:'🔫科技枪打人回血',cat:'magic'},
+{base1:'rod',base2:'belt',name:'鬼书',icon:'📕',desc:'📕对面有奶就出',cat:'magic'},
+{base1:'belt',base2:'belt',name:'狂徒铠甲',icon:'❤️',desc:'❤️狂徒坦克必备',cat:'tank'},
+{base1:'cloak',base2:'cloak',name:'龙爪',icon:'🐉',desc:'🐉龙牙抗法师',cat:'tank'},
+{base1:'armor',base2:'armor',name:'荆棘之甲',icon:'🦔',desc:'🦔反甲打我扎你',cat:'tank'},
+{base1:'armor',base2:'cloak',name:'石像鬼',icon:'🗿',desc:'🗿石像鬼万金油',cat:'tank'},
+{base1:'armor',base2:'belt',name:'日炎斗篷',icon:'☀️',desc:'☀️日炎站着烧人',cat:'tank'},
+{base1:'tear',base2:'belt',name:'救赎',icon:'✝️',desc:'✝️快死时奶队友',cat:'tank'},
+{base1:'cloak',base2:'glove',name:'水银',icon:'💨',desc:'💨防刺客必备',cat:'tank'},
+{base1:'bow',base2:'armor',name:'泰坦',icon:'🏔️',desc:'🏔️泰坦挨打越快',cat:'tank'}
+];
+
+var heroData={
+'芸阿娜':{cost:4,region:'艾欧尼亚',class:'迅击战士',skill:'百花缭乱',skillDesc:'花瓣风暴攻击+治疗',desc:'🌸又打又奶！法系C首选',items:['法爆','大帽子','正义之拳'],tip:'站后排，装备够就是爹'},
+'千珏':{cost:5,region:'暗影岛',class:'射手',skill:'羔羊的祝福',skillDesc:'画圈内所有人暂时死不了',desc:'🐺无敌圈！保命反杀',items:['羊刀','无尽','海妖'],tip:'暗影岛收魂后伤害爆炸'},
+'德莱文':{cost:3,region:'诺克萨斯',class:'迅击战士',skill:'旋转飞斧',skillDesc:'接斧头攻击更疼',desc:'🪓斧子王！输出爆炸',items:['无尽','饮血','破甲弓'],tip:'诺克核心C，3费就能拿'},
+'薇恩':{cost:3,region:'德玛西亚',class:'狙神',skill:'圣银弩箭',skillDesc:'每三下真实伤害',desc:'🏹三环真伤！专打肉',items:['羊刀','海妖','巨杀'],tip:'德玛核心C，羊刀必做'},
+'维迦':{cost:4,region:'约德尔人',class:'法师',skill:'恶魔冲击',skillDesc:'流星砸人，杀人加法强',desc:'⭐杀人越多越猛！',items:['蓝霸符','法爆','大帽子'],tip:'解锁要两个帽子'},
+'瑟提':{cost:5,region:'艾欧尼亚',class:'腕豪',skill:'蓄力重拳',skillDesc:'挨打积怒，一拳超高伤害',desc:'👊挨揍越多打人越疼！',items:['狂徒','龙牙','石像鬼'],tip:'解锁超简单：前排只站1人'},
+'斯维因':{cost:4,region:'诺克萨斯',class:'法师',skill:'恶魔集群',skillDesc:'变身吸血',desc:'🦅变身吸血怪！越打越肉',items:['狂徒','龙牙','反甲'],tip:'诺克核心前排'},
+'加里奥':{cost:5,region:'德玛西亚',class:'守护者',skill:'英雄登场',skillDesc:'从天砸晕一大片',desc:'🗽从天而降！控制一片',items:['狂徒','日炎','石像鬼'],tip:'解锁需德玛12星级'},
+'孙悟空':{cost:4,region:'艾欧尼亚',class:'斗士',skill:'大闹天宫',skillDesc:'分身三猴揍人',desc:'🐵三个猴开打！',items:['日炎','狂徒','石像鬼'],tip:'艾欧主坦'},
+'塞拉斯':{cost:7,region:'诺克萨斯',class:'法师',skill:'窃法之链',skillDesc:'偷敌人技能强化使用',desc:'⛓️7费超模！控制收割一体',items:['蓝霸符','法爆','大帽子'],tip:'解锁：卖2星皇子+盖伦+拉克丝'},
+'锤石':{cost:5,region:'暗影岛',class:'神盾使',skill:'幽冥监牢',skillDesc:'建墙关人吸血',desc:'👻建墙关人！',items:['狂徒','救赎','石像鬼'],tip:'解锁需150灵魂'},
+'费德提克':{cost:5,region:'暗影岛',class:'征服者',skill:'群鸦风暴',skillDesc:'传送人堆持续吸血',desc:'🎃稻草人开大全场颤抖',items:['蓝霸符','法爆','大帽子'],tip:'暗影岛机制超强'},
+'塔姆':{cost:5,region:'比尔吉沃特',class:'斗士',skill:'吞噬',skillDesc:'一口吞敌消化吐出',desc:'🐸一口一个！吞人消化',items:['狂徒','龙牙','石像鬼'],tip:'解锁需500银蛇币'}
+};
+
+var comps=[
+{id:1,name:'艾欧芸阿娜',tier:'T0',diff:'简单',desc:'🌸新手首选！解锁简单',core:['芸阿娜','瑟提'],items:'法爆+大帽子+正义之拳',unlock:'瑟提：8级前排只站1人'},
+{id:2,name:'千珏暗影',tier:'T0',diff:'中等',desc:'🐺伤害天花板！大成无敌',core:['千珏','塞拉斯'],items:'羊刀+无尽+海妖',unlock:'塞拉斯：卖2星皇子+盖伦+拉克丝'},
+{id:3,name:'7诺克萨斯',tier:'T0',diff:'简单',desc:'🪓暴力砍王！',core:['德莱文','斯维因'],items:'无尽+饮血+破甲弓',unlock:'乐芙兰：赛恩带两件装备'},
+{id:4,name:'7德玛西亚',tier:'T1',diff:'简单',desc:'🏰越打越硬！',core:['薇恩','加里奥'],items:'羊刀+海妖+巨杀',unlock:'加里奥：德玛12星级'},
+{id:5,name:'8约德尔人',tier:'T1',diff:'简单',desc:'🐹小个子大能量！',core:['维迦','波比'],items:'蓝霸符+法爆+大帽子',unlock:'维迦：需要两个帽子'},
+{id:6,name:'比尔吉沃特',tier:'T1',diff:'中等',desc:'🏴‍☠️海盗发财！',core:['格雷福斯','塔姆'],items:'羊刀+无尽+巨杀',unlock:'塔姆：花费500银蛇币'},
+{id:7,name:'赌狗佛耶戈',tier:'赌狗',diff:'困难',desc:'👻成了吃鸡败了八',core:['佛耶戈'],items:'羊刀+无尽+饮血',unlock:'约里克：佛耶戈带两件装'},
+{id:8,name:'赌狗崔斯特',tier:'赌狗',diff:'困难',desc:'🃏成了直接起飞',core:['崔斯特','格雷福斯'],items:'蓝霸符+法爆+大帽子',unlock:'格雷福斯：崔斯特带两件装'}
+];
+
+var unlocks=[
+{cost:'7费',name:'塞拉斯',cond:'卖2星皇子+盖伦+拉克丝',tip:'法系核心！'},
+{cost:'5费',name:'瑟提',cond:'8级前两排只站1个',tip:'最简单！'},
+{cost:'5费',name:'加里奥',cond:'德玛弈子12星级',tip:'德玛终极'},
+{cost:'5费',name:'锤石',cond:'收集150灵魂',tip:'暗影岛体系'},
+{cost:'5费',name:'塔姆',cond:'花费500银蛇币',tip:'比尔终极'},
+{cost:'4费',name:'维迦',cond:'弈子带两个帽子',tip:'约德尔核心！'},
+{cost:'4费',name:'永恩',cond:'3星亚索',tip:'艾欧体系'},
+{cost:'3费',name:'乐芙兰',cond:'赛恩带两件装备',tip:'诺克必解！'}
+];
+
+var guides=[
+{stage:'2-1',title:'升4人口',tip:'标准操作',color:'#22c55e'},
+{stage:'2-5',title:'升5人口',tip:'稳血',color:'#22c55e'},
+{stage:'3-2',title:'升6人口⭐',tip:'关键！合装备',color:'#3b82f6'},
+{stage:'4-2',title:'升8大搜⭐',tip:'最关键！C位2星',color:'#ef4444'},
+{stage:'拉9',title:'解锁7费',tip:'血健康才拉',color:'#fbbf24'}
+];
+
+var sel1=null,sel2=null;
+
+function showTab(id){
+document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('active')});
+document.getElementById(id).classList.add('active');
+event.target.classList.add('active');
+if(id==='comps')showCompList();
+if(id==='heroes')showHeroList();
+}
+
+function getIcon(id){var i=baseItems.find(function(x){return x.id===id});return i?i.icon:'?';}
+
+function selectItem(id){
+if(sel1===id)sel1=null;
+else if(sel2===id)sel2=null;
+else if(!sel1)sel1=id;
+else if(!sel2)sel2=id;
+else{sel1=id;sel2=null;}
+updateUI();
+}
+
+function resetItems(){sel1=null;sel2=null;updateUI();}
+
+function updateUI(){
+document.querySelectorAll('.item-btn').forEach(function(b){
+var id=b.getAttribute('data-id');
+b.classList.toggle('sel',id===sel1||id===sel2);
+});
+var s1=document.getElementById('s1'),s2=document.getElementById('s2');
+s1.textContent=sel1?getIcon(sel1):'?';
+s2.textContent=sel2?getIcon(sel2):'?';
+s1.classList.toggle('filled',!!sel1);
+s2.classList.toggle('filled',!!sel2);
+var r=null;
+if(sel1&&sel2)r=combinedItems.find(function(x){return(x.base1===sel1&&x.base2===sel2)||(x.base1===sel2&&x.base2===sel1);});
+var res=document.getElementById('res'),desc=document.getElementById('resDesc');
+if(r){res.innerHTML='<span style="font-size:18px">'+r.icon+'</span><span style="font-size:9px;color:#fbbf24">'+r.name+'</span>';res.classList.add('filled');desc.textContent=r.desc;}
+else{res.innerHTML='<span>?</span>';res.classList.remove('filled');desc.textContent='';}
+}
+
+function renderItems(){
+var h='';
+combinedItems.forEach(function(i){
+var c=i.cat==='physical'?'#fca5a5':i.cat==='magic'?'#c4b5fd':'#86efac';
+h+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)"><span style="font-size:24px">'+i.icon+'</span><div><div style="font-weight:500">'+i.name+'</div><div style="font-size:12px;color:'+c+'">'+i.desc+'</div></div></div>';
+});
+document.getElementById('itemList').innerHTML=h;
+}
+
+function showCompList(){
+document.getElementById('compList').classList.remove('hidden');
+document.getElementById('compDetail').classList.add('hidden');
+}
+
+function showCompDetail(id){
+var c=comps.find(function(x){return x.id===id});
+if(!c)return;
+document.getElementById('compList').classList.add('hidden');
+var d=document.getElementById('compDetail');
+d.classList.remove('hidden');
+var bc=c.tier==='T0'?'t0':c.tier==='T1'?'t1':'bet';
+d.innerHTML='<button class="back-btn" onclick="showCompList()">←返回</button>'+
+'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-weight:bold;font-size:16px">'+c.name+'</span><span class="badge '+bc+'">'+c.tier+'</span></div>'+
+'<div style="color:#888;margin-bottom:10px">'+c.desc+'</div>'+
+'<div style="margin-bottom:10px">'+c.core.map(function(u){return'<span class="tag">⭐'+u+'</span>';}).join('')+'</div>'+
+'<div style="font-size:13px;color:#a1a1aa">💎 '+c.items+'</div></div>'+
+'<div class="card" style="background:rgba(6,182,212,0.1)"><div style="color:#22d3ee;font-weight:bold;margin-bottom:8px">🔓 解锁条件</div><div style="color:#67e8f9;font-size:13px">'+c.unlock+'</div></div>';
+}
+
+function renderComps(){
+var h='';
+['T0','T1','赌狗'].forEach(function(tier){
+var cs=comps.filter(function(c){return c.tier===tier});
+var hc=tier==='T0'?'t0':tier==='T1'?'t1':'bet';
+var label=tier==='赌狗'?'🎲赌狗阵容':'⭐'+tier+(tier==='T0'?'稳定吃鸡':'稳定前四');
+h+='<div style="margin-bottom:16px"><div class="tier-h '+hc+'">'+label+'</div><div class="tier-b">';
+cs.forEach(function(c){
+var dc=c.diff==='简单'?'#22c55e':c.diff==='中等'?'#fbbf24':'#ef4444';
+h+='<div class="card" style="cursor:pointer;margin-bottom:8px" onclick="showCompDetail('+c.id+')"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:bold">'+c.name+'</span><span style="color:'+dc+';font-size:11px">'+c.diff+'</span></div><div style="color:#888;font-size:13px;margin-bottom:6px">'+c.desc+'</div><div>'+c.core.map(function(u){return'<span class="tag">⭐'+u+'</span>';}).join('')+'</div></div>';
+});
+h+='</div></div>';
+});
+document.getElementById('compList').innerHTML=h;
+}
+
+function showHeroList(){
+document.getElementById('heroList').classList.remove('hidden');
+document.getElementById('heroDetail').classList.add('hidden');
+}
+
+function showHeroDetail(name){
+var h=heroData[name];
+if(!h)return;
+document.getElementById('heroList').classList.add('hidden');
+var d=document.getElementById('heroDetail');
+d.classList.remove('hidden');
+var cc={7:'#ef4444',5:'#fbbf24',4:'#a855f7',3:'#3b82f6'}[h.cost]||'#3b82f6';
+var tc=h.cost===5?'#000':'#fff';
+d.innerHTML='<button class="back-btn" onclick="showHeroList()">←返回</button>'+
+'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:bold;font-size:18px">'+name+'</span><span class="badge" style="background:'+cc+';color:'+tc+'">'+h.cost+'费</span></div>'+
+'<div style="color:#666;font-size:13px;margin-bottom:14px">'+h.region+' · '+h.class+'</div>'+
+'<div style="background:rgba(251,191,36,0.1);border-radius:10px;padding:14px;margin-bottom:14px"><div style="color:#fbbf24;font-weight:bold;margin-bottom:6px">⚡'+h.skill+'</div><div style="color:#888;font-size:13px;margin-bottom:8px">'+h.skillDesc+'</div><div style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;border-left:3px solid #fbbf24">'+h.desc+'</div></div>'+
+(h.items?'<div style="margin-bottom:14px"><div style="color:#ec4899;font-weight:bold;margin-bottom:8px">💎推荐装备</div><div>'+h.items.map(function(i){return'<span class="tag">'+i+'</span>';}).join('')+'</div></div>':'')+
+(h.tip?'<div style="background:rgba(34,197,94,0.1);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;color:#86efac"><span style="font-size:18px">💡</span><span>'+h.tip+'</span></div>':'')+'</div>';
+}
+
+function renderHeroes(){
+var h='<div style="background:rgba(6,182,212,0.1);border-radius:10px;padding:10px;margin-bottom:14px;color:#67e8f9;font-size:13px">💡点击英雄查看详情</div>';
+[7,5,4,3].forEach(function(cost){
+var hs=[];for(var n in heroData)if(heroData[n].cost===cost)hs.push(n);
+if(hs.length===0)return;
+var hc='c'+cost;
+var label=cost===7?'🌟7费传奇':cost===5?'⭐5费':cost===4?'💎4费':'🔵3费';
+var ac={7:'#ef4444',5:'#fbbf24',4:'#a855f7',3:'#3b82f6'}[cost];
+h+='<div style="margin-bottom:14px"><div class="tier-h" style="background:linear-gradient(90deg,'+ac+','+ac+'aa);color:'+(cost===5?'#000':'#fff')+'">'+label+'</div><div class="tier-b"><div class="hero-grid">';
+hs.forEach(function(n){h+='<button class="hero-btn" onclick="showHeroDetail(\''+n+'\')"><div style="font-weight:bold;color:'+ac+'">'+n+'</div><div style="font-size:10px;color:#555">'+heroData[n].region+'</div></button>';});
+h+='</div></div></div>';
+});
+document.getElementById('heroList').innerHTML=h;
+}
+
+function renderUnlocks(){
+var h='';
+unlocks.forEach(function(u){
+var bc='c'+u.cost.charAt(0);
+h+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:bold">'+u.name+'</span><span class="badge '+bc+'">'+u.cost+'</span></div><div style="color:#888;font-size:13px;padding:8px;background:rgba(0,0,0,0.2);border-radius:6px;border-left:3px solid #555;margin-bottom:6px">📋'+u.cond+'</div><div style="color:#86efac;font-size:12px">💡'+u.tip+'</div></div>';
+});
+document.getElementById('unlockList').innerHTML=h;
+}
+
+function renderGuides(){
+var h='';
+guides.forEach(function(g){
+h+='<div style="display:flex;gap:10px;margin-bottom:10px"><div style="background:'+g.color+'30;color:'+g.color+';padding:6px 10px;border-radius:8px;font-size:12px;font-weight:bold;min-width:45px;text-align:center">'+g.stage+'</div><div><div style="font-weight:500">'+g.title+'</div><div style="font-size:12px;color:#888">'+g.tip+'</div></div></div>';
+});
+document.getElementById('guideList').innerHTML=h;
+}
+
+function init(){
+var gh='';
+baseItems.forEach(function(i){gh+='<button class="item-btn" data-id="'+i.id+'" onclick="selectItem(\''+i.id+'\')"><span style="font-size:20px">'+i.icon+'</span><br><span style="font-size:9px;color:#666">'+i.name.slice(0,2)+'</span></button>';});
+document.getElementById('baseGrid').innerHTML=gh;
+renderItems();
+renderComps();
+renderHeroes();
+renderUnlocks();
+renderGuides();
+}
+init();
+</script>
+</body>
+</html>
